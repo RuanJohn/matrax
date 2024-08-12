@@ -36,7 +36,7 @@ from jax import lax, random
 
 def create_random_matrix(
     key_integrer: int, num_agents: int, action_space: int
-) -> Tuple[chex.Array, chex.Array, chex.Array]:
+) -> chex.Array:
     shape = (action_space,) * num_agents
 
     subkey1, subkey2, subkey3 = random.split(random.PRNGKey(key_integrer), 3)
@@ -59,7 +59,7 @@ def create_random_matrix(
         return jnp.all(max_pos == min_pos)
 
     def body_fun(
-        carry: Tuple[chex.PRNGKey, chex.Array]
+        carry: Tuple[chex.PRNGKey, chex.Array],
     ) -> Tuple[chex.PRNGKey, chex.Array]:
         key, _ = carry
         new_key, subkey = random.split(key)
@@ -73,14 +73,13 @@ def create_random_matrix(
     random_matrix = random_matrix.at[tuple(max_pos)].set(max_reward)
     random_matrix = random_matrix.at[tuple(min_pos)].set(min_reward)
 
-    return random_matrix, max_pos, min_pos
+    return random_matrix
 
 
 if __name__ == "__main__":
-
     # Example usage
     key_int = 2
     num_agents = 4
     action_space = 3
-    matrix, max_pos, min_pos = create_random_matrix(key_int, num_agents, action_space)
+    matrix = create_random_matrix(key_int, num_agents, action_space)
     print(matrix.shape)
