@@ -23,9 +23,8 @@ from jumanji.env import Environment
 from jumanji.types import TimeStep, restart, termination, transition
 
 from matrax.types import Observation, State
-from matrax.utils.observation_shadowed import (
-    generate_shadowed_equilibrium_matrix as create_random_matrix,
-)
+from matrax.utils.observation import create_random_matrix
+from matrax.utils.observation_shadowed import generate_shadowed_equilibrium_matrix
 
 
 class MatrixGame(Environment[State]):
@@ -38,6 +37,7 @@ class MatrixGame(Environment[State]):
         num_actions: int,
         keep_state: bool = False,
         time_limit: int = 1,
+        generate_shadowed_payoffs: bool = True,
     ):
         """Instantiates a `MatrixGame` environment.
 
@@ -49,7 +49,14 @@ class MatrixGame(Environment[State]):
             time_limit: the maximum step limit allowed within the environment.
                 Defaults to 500.
         """
-        self.payoff_matrix = create_random_matrix(key_integer, num_agents, num_actions)
+        if generate_shadowed_payoffs:
+            self.payoff_matrix = generate_shadowed_equilibrium_matrix(
+                key_integer, num_agents, num_actions
+            )
+        else:
+            self.payoff_matrix = create_random_matrix(
+                key_integer, num_agents, num_actions
+            )
         self.keep_state = keep_state
 
         # Number of agents is inferred from the dimensions of the payoff matrix
