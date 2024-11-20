@@ -1,1 +1,1 @@
-jumanji==0.3.1
+jumanji @ git+https://github.com/sash-a/jumanji@old_jumanji
